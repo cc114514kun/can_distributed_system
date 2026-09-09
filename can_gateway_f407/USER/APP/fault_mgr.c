@@ -29,6 +29,8 @@ static const char* FaultMgr_Code2Str(FaultCode_t code)
         case FAULT_NODE_OFFLINE:        return "FAULT_NODE_OFFLINE";
         case FAULT_SENSOR_CRC:          return "FAULT_SENSOR_CRC";
         case FAULT_SENSOR_SEQUENCE:     return "FAULT_SENSOR_SEQUENCE";
+        case FAULT_SENSOR_ALARM:        return "FAULT_SENSOR_ALARM";
+        case FAULT_NODE_CAN_ERROR:      return "FAULT_NODE_CAN_ERROR";
         case FAULT_UART_OVERFLOW:       return "FAULT_UART_OVERFLOW";
         case FAULT_CONFIG_CRC:          return "FAULT_CONFIG_CRC";
         case FAULT_SYSTEM_FATAL:        return "FAULT_SYSTEM_FATAL";
@@ -59,6 +61,8 @@ static void FaultMgr_DoRecovery(FaultCode_t code)
         case FAULT_SENSOR_CRC:
         case FAULT_NODE_OFFLINE:
         case FAULT_SENSOR_SEQUENCE:
+        case FAULT_SENSOR_ALARM:
+        case FAULT_NODE_CAN_ERROR:
         case FAULT_CAN_RX_OVERFLOW:
         case FAULT_CAN_PROTOCOL:
         case FAULT_UART_OVERFLOW:

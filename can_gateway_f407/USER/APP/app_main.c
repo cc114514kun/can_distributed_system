@@ -51,8 +51,14 @@ static void App_MainTask(void *pvParameters)
      * F407 controller does not ACK frames from external nodes, so the F103
      * sender can enter error-passive / bus-off and stop transmitting. */
     {
-        const uint8_t test_data[5] = {0x11, 0x22, 0x33, 0x44, 0x55};
-        bsp_can_loopback_test(0x12345678U, test_data, 5U);
+        uint8_t test_data[CAN_APP_FRAME_DLC] = {0U};
+        uint32_t test_id = CAN_MAKE_EXTID(CAN_PRIORITY_DATA,
+                                           CAN_DEVICE_COLLECTOR,
+                                           1U,
+                                           MSG_TYPE_SENSOR,
+                                           SUB_TYPE_SENSOR_ENV);
+        test_data[7] = app_calc_crc8(test_data, 7U);
+        bsp_can_loopback_test(test_id, test_data, CAN_APP_FRAME_DLC);
     }
 #endif
 

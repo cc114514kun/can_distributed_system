@@ -9,7 +9,7 @@
 #define PRODUCT_NAME        "CAN Sensor Gateway"
 #define HW_VER_STR          "F407‑GW‑V1.0"
 #define FW_VER_STR          "V1.2.0"
-#define PROTOCOL_VER_STR    "V1.0"
+#define PROTOCOL_VER_STR    "V2.0"
 #define BUILD_DATE_STR      __DATE__   //编译器内置宏，自动取编译日期
 
 

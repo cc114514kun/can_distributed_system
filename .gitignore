@@ -52,3 +52,9 @@ firmware_output/
 !*.h
 !*.md
 !*.uvprojx
+# 本地面试资料
+/CAN与智慧农业项目_技术面试高频问答*.docx
+/CAN与智慧农业项目_技术面试高频问答*.md
+/~$*
+/tools/build_interview_docx.py
+/tools/interview_docx_qa/

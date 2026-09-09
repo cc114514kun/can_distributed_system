@@ -96,6 +96,8 @@ static const char* Cli_FaultCode2Str(FaultCode_t code)
         case FAULT_NODE_OFFLINE:        return "FAULT_NODE_OFFLINE";
         case FAULT_SENSOR_CRC:          return "FAULT_SENSOR_CRC";
         case FAULT_SENSOR_SEQUENCE:     return "FAULT_SENSOR_SEQUENCE";
+        case FAULT_SENSOR_ALARM:        return "FAULT_SENSOR_ALARM";
+        case FAULT_NODE_CAN_ERROR:      return "FAULT_NODE_CAN_ERROR";
         case FAULT_UART_OVERFLOW:       return "FAULT_UART_OVERFLOW";
         case FAULT_CONFIG_CRC:          return "FAULT_CONFIG_CRC";
         case FAULT_SYSTEM_FATAL:        return "FAULT_SYSTEM_FATAL";
@@ -198,6 +200,7 @@ static void Cli_ClearCounters(void)
         nodes[i].offline_count = 0U;
         nodes[i].recovery_count = 0U;
         nodes[i].last_seq      = 0U;
+        nodes[i].seq_valid     = false;
     }
     App_ReportPrint("OK COUNTERS_CLEARED\r\n");
 }

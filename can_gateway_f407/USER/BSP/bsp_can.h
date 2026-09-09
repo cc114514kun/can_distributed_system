@@ -67,6 +67,7 @@ typedef struct
  uint16_t adc1;
  uint16_t adc2;
  uint8_t key_state;
+ uint8_t fault_code;
 } SensorData_t;
 
 /* F3.3 Per‑node state table. */
@@ -82,6 +83,7 @@ typedef struct
  uint32_t recovery_count;
  TickType_t last_rx_tick;
  uint16_t last_seq;
+ bool seq_valid;
  SensorData_t data; /* F1 raw data: ADC, key_state. */
  PhysData_t phys_data; /* F3.1 decoded physical quantities. */
  SensorRingBuf_t ring_buf; /* F3.4 per‑node history ring buffer. */

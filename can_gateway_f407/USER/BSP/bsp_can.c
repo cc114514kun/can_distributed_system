@@ -397,10 +397,12 @@ void App_NodeTable_Init(void)
         nodes[i].recovery_count = 0U; /* recovery counter */
         nodes[i].last_rx_tick = xTaskGetTickCount();
         nodes[i].last_seq = 0U;
+        nodes[i].seq_valid = false;
         nodes[i].data.adc0 = 0U;
         nodes[i].data.adc1 = 0U;
         nodes[i].data.adc2 = 0U;
         nodes[i].data.key_state = 0U;
+        nodes[i].data.fault_code = 0U;
         memset(&nodes[i].phys_data, 0, sizeof(PhysData_t));
         ringbuf_init(&nodes[i].ring_buf); /* init each node ring buffer */
     }
@@ -428,31 +430,40 @@ void App_UpdateNodeTable(uint8_t node_id, uint16_t seq, const SensorData_t *p_se
         App_ReportPrint("[NODE] node:%d RECOVERY, recovery_cnt:%lu\r\n", node_id, p_node->recovery_count);
         #endif
     }
-    /* Sequence number gap detection (handles uint16 wrap). */
-    uint16_t seq_diff;
-    if (seq >= p_node->last_seq)
+    /* The first frame establishes the baseline. Subsequent subtraction is
+     * naturally wrap-safe for uint16_t sequence numbers. A delta in the
+     * backward half-range is treated as stale/out-of-order, not massive loss. */
+    if(p_node->seq_valid == false)
     {
-        seq_diff = seq - p_node->last_seq;
+        p_node->seq_valid = true;
+        p_node->last_seq = seq;
     }
     else
     {
-        seq_diff = (UINT16_MAX - p_node->last_seq) + seq + 1U;
-    }
-    if(seq_diff > 1U)
-    {
-        p_node->lost_count += (seq_diff - 1U);
+        uint16_t seq_diff = (uint16_t)(seq - p_node->last_seq);
+        if(seq_diff > 1U && seq_diff < 0x8000U)
+        {
+            p_node->lost_count += (seq_diff - 1U);
         #if NODE_DEBUG_PRINT
-        App_ReportPrint("[NODE] node:%d lost frame, lost_cnt:%lu\r\n", node_id, p_node->lost_count);
+            App_ReportPrint("[NODE] node:%d lost frame, lost_cnt:%lu\r\n",
+                            node_id, p_node->lost_count);
         #endif
+        }
+        /* Only move the baseline forward. Duplicate or stale/out-of-order
+         * frames must not make the following valid frame look lost. */
+        if(seq_diff > 0U && seq_diff < 0x8000U)
+        {
+            p_node->last_seq = seq;
+        }
     }
     /* Update stats, timestamp, raw data. */
     p_node->rx_count++;
-    p_node->last_seq = seq;
     p_node->last_rx_tick = xTaskGetTickCount();
     p_node->data.adc0 = p_sensor->adc0;
     p_node->data.adc1 = p_sensor->adc1;
     p_node->data.adc2 = p_sensor->adc2;
     p_node->data.key_state = p_sensor->key_state;
+    p_node->data.fault_code = p_sensor->fault_code;
     /* ===== Phase 3 business logic ===== */
     /* F3.1 Convert raw ADC to physical units (voltage, temperature). */
     app_raw_to_phys(&p_node->data, &p_node->phys_data);
