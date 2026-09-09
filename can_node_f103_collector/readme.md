@@ -1,6 +1,6 @@
 # STM32F103ZET6 Multi‑Signal Acquisition Terminal
 
-Hardware:正点原子精英开发板
+Hardware:STM32F103开发板
 
 ## Function
 1. ADC+DMA multi‑channel sampling, NTC temperature and potentiometer, sliding‑average filter
